@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Meta 廣告入門・三週互動課程</title>
+    <style>
+        :root {
+            --bg: #f3f5f9;
+            --card: #fff;
+            --text: #1c1e21;
+            --muted: #65676b;
+            --brand: #0866ff;
+            --soft: #e7f0ff;
+            --line: #e4e6eb;
+            --ok: #1a7f4b;
+            --okb: #e3f6ec;
+            --bad: #c0392b;
+            --badb: #fdeceb;
+            box-sizing: border-box;
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px)
+        }
+
+        @media (prefers-color-scheme:dark) {
+            :root:not([data-theme="light"]) {
+                --bg: #111214;
+                --card: #1c1e22;
+                --text: #e8eaed;
+                --muted: #9aa0a6;
+                --brand: #6ea8ff;
+                --soft: #1c2a44;
+                --line: #2c2f35;
+                --ok: #5fd394;
+                --okb: #15301f;
+                --bad: #ff8a7a;
+                --badb: #3a1c19
+            }
+        }
+
+        :root[data-theme="dark"] {
+            --bg: #111214;
+            --card: #1c1e22;
+            --text: #e8eaed;
+            --muted: #9aa0a6;
+            --brand: #6ea8ff;
+            --soft: #1c2a44;
+            --line: #2c2f35;
+            --ok: #5fd394;
+            --okb: #15301f;
+            --bad: #ff8a7a;
+            --badb: #3a1c19
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+            line-height: 1.7
+        }
+
+        nav {
+            position: sticky;
+            top: env(safe-area-inset-top, 0px);
+            background: var(--card);
+            border-bottom: 1px solid var(--line);
+            z-index: 5;
+            display: flex;
+            gap: 6px;
+            padding: 10px 16px;
+            justify-content: safe center;
+            overflow-x: auto
+        }
+
+        nav button {
+            white-space: nowrap;
+            border: 0;
+            background: none;
+            color: var(--muted);
+            padding: 8px 18px;
+            border-radius: 999px;
+            font-size: 15px;
+            cursor: pointer;
+            font-family: inherit
+        }
+
+        nav button.on {
+            background: var(--soft);
+            color: var(--brand);
+            font-weight: 600
+        }
+
+        main {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 20px 16px 64px
+        }
+
+        h1 {
+            font-size: 26px;
+            margin: 16px 0 4px
+        }
+
+        h3 {
+            margin: 0 0 2px;
+            font-size: 18px
+        }
+
+        .sub {
+            color: var(--muted);
+            font-size: 14px;
+            margin: 0 0 14px
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 18px 20px;
+            margin-bottom: 16px
+        }
+
+        .tag {
+            display: inline-block;
+            background: var(--soft);
+            color: var(--brand);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 2px 10px;
+            border-radius: 999px;
+            margin-bottom: 6px
+        }
+
+        button {
+            font-family: inherit
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 10px
+        }
+
+        .term,
+        .opt {
+            border: 1px solid var(--line);
+            background: var(--card);
+            color: var(--text);
+            border-radius: 12px;
+            padding: 12px 14px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 15px;
+            transition: .15s
+        }
+
+        .term:hover,
+        .opt:hover {
+            border-color: var(--brand)
+        }
+
+        .term .d {
+            display: none;
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 6px
+        }
+
+        .term.open {
+            background: var(--soft);
+            border-color: var(--brand)
+        }
+
+        .term.open .d {
+            display: block
+        }
+
+        .opt.sel {
+            border-color: var(--brand);
+            background: var(--soft);
+            box-shadow: 0 0 0 1px var(--brand)
+        }
+
+        .opt small {
+            display: block;
+            color: var(--muted);
+            font-size: 12px
+        }
+
+        .opt.ok {
+            background: var(--okb);
+            border-color: var(--ok)
+        }
+
+        .opt.bad {
+            background: var(--badb);
+            border-color: var(--bad)
+        }
+
+        .layers {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px
+        }
+
+        .layers .opt:nth-child(2) {
+            margin-left: 16px
+        }
+
+        .layers .opt:nth-child(3) {
+            margin-left: 32px
+        }
+
+        .panel {
+            background: var(--soft);
+            border-radius: 12px;
+            padding: 14px 18px;
+            font-size: 15px
+        }
+
+        .panel ul {
+            margin: 6px 0;
+            padding-left: 20px
+        }
+
+        .mock {
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            overflow: hidden;
+            font-size: 13px
+        }
+
+        .mtabs {
+            display: flex;
+            background: var(--bg);
+            border-bottom: 1px solid var(--line)
+        }
+
+        .mtabs button {
+            flex: 1;
+            border: 0;
+            background: none;
+            padding: 10px 4px;
+            color: var(--muted);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            font-size: 13px
+        }
+
+        .mtabs button.on {
+            color: var(--brand);
+            border-color: var(--brand);
+            background: var(--card);
+            font-weight: 600
+        }
+
+        .tool {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            padding: 8px
+        }
+
+        .tool button {
+            border: 1px solid var(--line);
+            background: var(--card);
+            color: var(--text);
+            border-radius: 6px;
+            padding: 4px 10px;
+            cursor: pointer;
+            font-size: 12px
+        }
+
+        .tool button.pri {
+            background: var(--brand);
+            color: #fff;
+            border-color: var(--brand)
+        }
+
+        .tw {
+            overflow-x: auto
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            min-width: 480px
+        }
+
+        th,
+        td {
+            padding: 8px 10px;
+            text-align: left;
+            border-top: 1px solid var(--line);
+            white-space: nowrap
+        }
+
+        th {
+            color: var(--muted);
+            font-weight: 600;
+            cursor: pointer;
+            background: var(--bg)
+        }
+
+        th:hover {
+            color: var(--brand)
+        }
+
+        tbody tr {
+            cursor: pointer
+        }
+
+        tbody tr:hover {
+            background: var(--soft)
+        }
+
+        .hint {
+            margin: 10px 8px 8px;
+            min-height: 44px
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px
+        }
+
+        @media(min-width:680px) {
+            .row {
+                grid-template-columns: 1fr 280px
+            }
+        }
+
+        .ad {
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--card);
+            font-size: 14px;
+            align-self: start
+        }
+
+        .adh {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            padding: 10px
+        }
+
+        .av {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--brand);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700
+        }
+
+        .adh small {
+            display: block;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.2
+        }
+
+        .ad p {
+            margin: 0 10px 8px
+        }
+
+        .adimg {
+            height: 150px;
+            background: linear-gradient(135deg, #9ec5ff, #c9b6ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px
+        }
+
+        .adf {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: var(--bg);
+            gap: 8px
+        }
+
+        .cta {
+            background: var(--line);
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap
+        }
+
+        .steps {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 12px
+        }
+
+        .steps i {
+            flex: 1;
+            height: 5px;
+            border-radius: 5px;
+            background: var(--line)
+        }
+
+        .steps i.on {
+            background: var(--brand)
+        }
+
+        .nb {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 14px
+        }
+
+        .btn {
+            border: 0;
+            background: var(--brand);
+            color: #fff;
+            padding: 8px 18px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 14px
+        }
+
+        .btn.g {
+            background: var(--line);
+            color: var(--text)
+        }
+
+        .btn:disabled {
+            opacity: .4;
+            cursor: default
+        }
+
+        input[type=text],
+        select {
+            width: 100%;
+            padding: 9px 12px;
+            border-radius: 10px;
+            border: 1px solid var(--line);
+            background: var(--card);
+            color: var(--text);
+            font-size: 15px;
+            margin: 6px 0 10px;
+            font-family: inherit
+        }
+
+        input[type=range] {
+            width: 100%;
+            accent-color: var(--brand)
+        }
+
+        .q {
+            margin-bottom: 16px
+        }
+
+        .q b {
+            display: block;
+            margin-bottom: 8px
+        }
+
+        .why {
+            display: none;
+            font-size: 13px;
+            color: var(--muted);
+            margin-top: 6px
+        }
+
+        .opts {
+            display: flex;
+            flex-direction: column;
+            gap: 6px
+        }
+
+        .score {
+            font-weight: 600;
+            color: var(--brand)
+        }
+
+        .chips {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 8px 0
+        }
+
+        .chip {
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 6px 14px;
+            cursor: pointer;
+            background: var(--card);
+            color: var(--text);
+            font-size: 14px
+        }
+
+        .chip.used {
+            opacity: .35;
+            pointer-events: none
+        }
+
+        .slot {
+            padding: 8px 12px;
+            border: 1px dashed var(--line);
+            border-radius: 10px;
+            margin: 4px 0;
+            min-height: 38px;
+            font-size: 14px
+        }
+
+        .slot.f {
+            border-style: solid;
+            border-color: var(--ok);
+            background: var(--okb)
+        }
+
+        .calc {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0 12px
+        }
+
+        .calc label {
+            font-size: 13px;
+            color: var(--muted)
+        }
+
+        .res {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 8px;
+            margin-top: 6px
+        }
+
+        .res div {
+            background: var(--soft);
+            border-radius: 10px;
+            padding: 8px 12px;
+            font-size: 12px;
+            color: var(--muted)
+        }
+
+        .res b {
+            display: block;
+            font-size: 20px;
+            color: var(--brand)
+        }
+
+        details.fold>summary {
+            cursor: pointer;
+            font-weight: 600;
+            padding: 2px 0
+        }
+
+        details.fold[open]>summary {
+            margin-bottom: 6px
+        }
+
+        .fold .card {
+            margin-top: 12px;
+            box-shadow: none
+        }
+
+        .row2 {
+            display: grid;
+            gap: 14px
+        }
+
+        @media(min-width:680px) {
+            .row2 {
+                grid-template-columns: 300px 1fr
+            }
+        }
+
+        .hs {
+            position: relative;
+            cursor: pointer;
+            border-radius: 6px
+        }
+
+        .hs.on2 {
+            outline: 2px solid var(--brand);
+            outline-offset: -2px
+        }
+
+        .bd {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--brand);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none
+        }
+
+        .ph {
+            background: #111;
+            border-radius: 26px;
+            padding: 8px;
+            width: 230px;
+            max-width: 100%;
+            margin: 0 auto
+        }
+
+        .phi {
+            position: relative;
+            border-radius: 18px;
+            overflow: hidden;
+            background: var(--card);
+            color: var(--text);
+            font-size: 12px;
+            line-height: 1.5
+        }
+
+        .safe {
+            position: absolute;
+            border: 1px dashed #ff5a5a;
+            background: rgba(255, 90, 90, .2);
+            color: #fff;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none
+        }
+    </style>
+</head>
+
+<body>
+    <nav id="nav"></nav>
+    <main id="app"></main>
+    <script>
+        var $ = function (s, r) { return (r || document).querySelector(s) }, $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)) };
+        function E(h) { var d = document.createElement('div'); d.innerHTML = h.trim(); return d.firstChild }
+        function card(tag, t, s, node) { var c = E('<div class="card"><span class="tag">' + tag + '</span><h3>' + t + '</h3><p class="sub">' + s + '</p></div>'); c.appendChild(node); return c }
+        function head(t, s) { return E('<div><h1>' + t + '</h1><p class="sub">' + s + '</p></div>') }
+
+        /* 名詞卡 */
+        function terms() {
+            var T = [["曝光", "廣告被顯示的總次數，同一個人看兩次就算兩次。"], ["觸及", "看到廣告的不重複人數。"], ["行銷目標", "你希望廣告達成的結果，例如觸及、流量、潛在顧客、銷售，決定系統幫你找哪種人。"], ["Pixel／資料集", "放在網站上的追蹤碼，記錄訪客做了什麼（瀏覽、加入購物車、購買），用來衡量轉換與建立再行銷受眾。"], ["轉換", "對方完成你想要的動作，例如購買、預約、填表。"], ["預算", "願意花的錢，可設每日或總預算。"], ["版位", "廣告出現的位置，例如動態消息、限時動態、Reels。"]];
+            var g = E('<div class="grid"></div>'); T.forEach(function (t) { var b = E('<button class="term"><b>' + t[0] + '</b><div class="d">' + t[1] + '</div></button>'); b.onclick = function () { b.classList.toggle('open') }; g.appendChild(b) }); return g
+        }
+
+        /* 三層架構 */
+        function layers() {
+            var L = [["行銷活動", "Campaign", "決定「目標」", ["選擇行銷目標：觸及、流量、互動、潛在顧客、銷售", "一個行銷活動對應一個目標"], "廣告管理員第一個分頁"], ["廣告組合", "Ad Set", "決定「給誰看、花多少、在哪出現」", ["受眾：地區、年齡、興趣、自訂與類似受眾", "預算與時程", "版位：Facebook、Instagram 等"], "第二個分頁"], ["廣告", "Ad", "決定「看到什麼」", ["圖片、影片或輪播", "主要文字與標題", "行動呼籲按鈕與連結"], "第三個分頁"]];
+            var w = E('<div></div>'), ls = E('<div class="layers"></div>'), p = E('<div class="panel"></div>');
+            function show(i) { $$('.opt', ls).forEach(function (b, j) { b.classList.toggle('sel', i === j) }); var l = L[i]; p.innerHTML = '<b>' + l[0] + '（' + l[1] + '）：' + l[2] + '</b><ul>' + l[3].map(function (x) { return '<li>' + x + '</li>' }).join('') + '</ul>後台位置：' + l[4] }
+            L.forEach(function (l, i) { var b = E('<button class="opt"><b>' + (i + 1) + '. ' + l[0] + '</b><small>' + l[2] + '</small></button>'); b.onclick = function () { show(i) }; ls.appendChild(b) });
+            w.appendChild(ls); w.appendChild(p); show(0); return w
+        }
+
+        /* 模擬廣告管理員 */
+        function mock() {
+            var D = [{ n: "行銷活動", h: ["名稱", "目標", "預算", "觸及", "點擊", "花費"], r: [["11 月促銷", "流量", "NT$300/日", "12,480", "386", "NT$1,420"], ["新客開發", "潛在顧客", "NT$200/日", "8,230", "154", "NT$980"], ["品牌認識", "觸及", "NT$150/日", "25,900", "210", "NT$760"]] },
+            { n: "廣告組合", h: ["名稱", "受眾", "版位", "觸及", "點擊", "花費"], r: [["台北 25-45 廣泛", "廣泛", "自動", "7,320", "240", "NT$860"], ["興趣：咖啡", "興趣", "動態＋Reels", "3,110", "98", "NT$410"], ["網站訪客 30 天", "自訂", "自動", "1,420", "48", "NT$150"]] },
+            { n: "廣告", h: ["名稱", "格式", "文案角度", "觸及", "點擊", "花費"], r: [["廣告 A 圖片", "圖片", "限時優惠", "5,120", "170", "NT$610"], ["廣告 B 影片", "影片", "使用情境", "4,860", "205", "NT$590"], ["廣告 C 輪播", "輪播", "商品系列", "2,300", "61", "NT$250"]] }];
+            var H = { "建立": "建立新的行銷活動、廣告組合或廣告，會依你目前所在的分頁新增對應的層級。", "編輯": "勾選一列後，修改它的設定。", "複製": "複製現有的廣告，快速做出不同版本來測試。", "A/B 測試": "同時測試兩個版本（例如兩種素材），看哪個表現比較好。", "規則": "設定自動化，例如花費超標就自動關閉。", "欄位": "自訂表格要顯示哪些數據，例如成效、轉換、成本。", "報表": "匯出或建立完整的數據報表。", "名稱": "每一列都是一個項目，點進去可以看下一層。", "目標": "這個行銷活動要達成的結果。", "預算": "每日或總預算，看一下有沒有花超出預期。", "觸及": "看到廣告的不重複人數。", "點擊": "人們點擊廣告的次數。", "花費": "目前已經花掉的金額。", "受眾": "這個廣告組合鎖定的對象。", "版位": "廣告出現的位置。", "格式": "素材的類型：圖片、影片、輪播。", "文案角度": "這則廣告主打的訊息，拿來比較哪種說法有效。" };
+            var cur = 0, w = E('<div class="mock"></div>'); var tabs = E('<div class="mtabs"></div>'), tool = E('<div class="tool"></div>'), tw = E('<div class="tw"></div>'), hint = E('<div class="panel hint">👆 點點看工具列、欄位標題或任何一列，這裡會告訴你它的用途。</div>');
+            D.forEach(function (d, i) { var b = E('<button>' + d.n + '</button>'); b.onclick = function () { cur = i; draw(); hint.innerHTML = '你切換到「' + d.n + '」分頁，這是第 ' + (i + 1) + ' 層。' }; tabs.appendChild(b) });
+            ["建立", "編輯", "複製", "A/B 測試", "規則", "欄位", "報表"].forEach(function (t, i) { var b = E('<button' + (i === 0 ? ' class="pri"' : '') + '>' + (i === 0 ? '＋ ' : '') + t + '</button>'); b.onclick = function () { hint.innerHTML = '<b>' + t + '</b>：' + H[t] }; tool.appendChild(b) });
+            function draw() {
+                $$('button', tabs).forEach(function (b, i) { b.classList.toggle('on', i === cur) }); var d = D[cur]; tw.innerHTML = '<table><thead><tr>' + d.h.map(function (x) { return '<th data-h="' + x + '">' + x + '</th>' }).join('') + '</tr></thead><tbody>' + d.r.map(function (r, k) { return '<tr data-r="' + k + '">' + r.map(function (c) { return '<td>' + c + '</td>' }).join('') + '</tr>' }).join('') + '</tbody></table>';
+                $$('th', tw).forEach(function (th) { th.onclick = function () { var k = th.dataset.h; hint.innerHTML = '<b>' + k + '</b>：' + H[k] } });
+                $$('tr[data-r]', tw).forEach(function (tr) { tr.onclick = function () { hint.innerHTML = '<b>' + d.r[tr.dataset.r][0] + '</b>：點進這一列會看到它底下的' + (cur < 2 ? D[cur + 1].n : '素材預覽與編輯畫面') + '。' } })
+            }
+            [tabs, tool, tw, hint].forEach(function (x) { w.appendChild(x) }); draw(); return w
+        }
+
+        /* 建立廣告精靈 */
+        function builder() {
+            var OBJ = [["觸及", "讓更多人看到", "新品牌曝光"], ["流量", "帶人到網站或粉專", "導到官網、文章"], ["互動", "按讚、留言、分享", "養粉絲、辦活動"], ["潛在顧客", "收集詢問或表單", "服務業、課程"], ["銷售", "促成購買", "電商"]],
+            AUD = [["廣泛", "只設地區與年齡，交給演算法", "現在常見的建議"], ["興趣", "依興趣與行為縮小範圍", "客群很明確時"], ["自訂", "網站訪客、顧客名單", "再行銷"], ["類似", "找跟現有顧客相像的人", "需要先有名單"]],
+            FMT = [["圖片", "🖼️"], ["影片", "🎬"], ["輪播", "🎠"], ["Reels", "📱"]], CTA = ["了解詳情", "立即購買", "馬上預約", "傳送訊息", "立即報名"];
+            var S = { o: -1, a: -1, b: 300, d: 7, f: 0, h: "本週限定優惠", c: 0 }, step = 0, LY = ["行銷活動", "廣告組合", "廣告組合", "廣告"], TT = ["① 選擇行銷目標", "② 選擇受眾", "③ 設定預算與時程", "④ 設計廣告"];
+            var w = E('<div class="row"><div><div class="steps"><i></i><i></i><i></i><i></i><i></i></div><div id="pn"></div><div class="nb"><button class="btn g" id="bk">上一步</button><button class="btn" id="nx">下一步</button></div></div><div class="ad"><div class="adh"><div class="av">店</div><div><b>你的粉絲專頁</b><small>贊助</small></div></div><p>這裡是廣告的主要文字，用一句話說明你能給對方什麼好處。</p><div class="adimg" id="pi">🖼️</div><div class="adf"><b id="ph"></b><span class="cta" id="pc"></span></div></div></div>');
+            var pn = $('#pn', w), sel = function (k, v) { return S[k] === v ? ' sel' : '' };
+            function opts(arr, k, f) { return '<div class="opts">' + arr.map(function (x, i) { return '<button class="opt' + sel(k, i) + '" data-k="' + k + '" data-v="' + i + '"><b>' + x[0] + '</b><small>' + f(x) + '</small></button>' }).join('') + '</div>' }
+            function render() {
+                $$('.steps i', w).forEach(function (i, j) { i.classList.toggle('on', j <= step) }); var h = '';
+                if (step < 4) h = '<span class="tag">屬於「' + LY[step] + '」層</span><h3>' + TT[step] + '</h3><br>';
+                if (step == 0) h += opts(OBJ, 'o', function (x) { return x[1] + '．' + x[2] });
+                if (step == 1) h += opts(AUD, 'a', function (x) { return x[1] + '．' + x[2] });
+                if (step == 2) h += '<label>每日預算：<b id="bv">NT$' + S.b + '</b></label><input type="range" id="br" min="100" max="1000" step="50" value="' + S.b + '"><label>投放天數：<b id="dv">' + S.d + ' 天</b></label><input type="range" id="dr" min="3" max="14" value="' + S.d + '"><div class="panel" id="tt"></div>';
+                if (step == 3) h += '<label>素材格式</label>' + opts(FMT, 'f', function (x) { return x[1] }) + '<label>標題</label><input type="text" id="hi" value="' + S.h + '" maxlength="20"><label>行動呼籲按鈕</label><select id="cs">' + CTA.map(function (c, i) { return '<option value="' + i + '"' + (S.c == i ? ' selected' : '') + '>' + c + '</option>' }).join('') + '</select>';
+                if (step == 4) h = '<h3>🎉 完成！你的廣告設定</h3><p class="sub">看看每個設定分別屬於哪一層：</p><div class="panel"><b>行銷活動：</b>目標＝' + OBJ[S.o][0] + '<br><b>廣告組合：</b>受眾＝' + AUD[S.a][0] + '，預算＝NT$' + S.b + '／日，共 ' + S.d + ' 天<br><b>廣告：</b>' + FMT[S.f][0] + '，標題「' + S.h + '」，按鈕「' + CTA[S.c] + '」</div>';
+                pn.innerHTML = h; $('#bk', w).disabled = step == 0; $('#nx', w).style.display = step == 4 ? 'none' : ''; $('#nx', w).disabled = (step == 0 && S.o < 0) || (step == 1 && S.a < 0);
+                $$('.opt[data-k]', pn).forEach(function (b) { b.onclick = function () { S[b.dataset.k] = +b.dataset.v; render(); upd() } });
+                var br = $('#br', pn); if (br) { var tt = function () { $('#bv', pn).textContent = 'NT$' + S.b; $('#dv', pn).textContent = S.d + ' 天'; $('#tt', pn).innerHTML = '預估總花費：<b>NT$' + (S.b * S.d).toLocaleString() + '</b>' }; br.oninput = function () { S.b = +br.value; tt() }; $('#dr', pn).oninput = function (e) { S.d = +e.target.value; tt() }; tt() }
+                var hi = $('#hi', pn); if (hi) { hi.oninput = function () { S.h = hi.value; upd() }; $('#cs', pn).onchange = function (e) { S.c = +e.target.value; upd() } }
+            }
+            function upd() { $('#pi', w).textContent = FMT[S.f][1]; $('#ph', w).textContent = S.h; $('#pc', w).textContent = CTA[S.c] }
+            $('#bk', w).onclick = function () { step--; render() }; $('#nx', w).onclick = function () { step++; render() }; render(); upd(); return w
+        }
+
+        /* 小測驗 */
+        function quiz(items) {
+            var w = E('<div></div>'), n = 0, done = 0, sc = E('<p class="score"></p>');
+            items.forEach(function (it) {
+                var q = E('<div class="q"><b>' + it[0] + '</b><div class="opts"></div><div class="why">' + it[3] + '</div></div>'), o = $('.opts', q), a = false;
+                it[1].forEach(function (t, i) { var b = E('<button class="opt">' + t + '</button>'); b.onclick = function () { if (a) return; a = true; done++; if (i === it[2]) { n++; b.classList.add('ok') } else { b.classList.add('bad'); $$('.opt', o)[it[2]].classList.add('ok') } $('.why', q).style.display = 'block'; sc.textContent = done == items.length ? '完成！答對 ' + n + ' / ' + items.length + ' 題' : '' }; o.appendChild(b) }); w.appendChild(q)
+            }); w.appendChild(sc); return w
+        }
+
+        /* 排序題 */
+        function order() {
+            var C = ["設定目標", "鎖定受眾", "構思訊息與素材", "決定預算與版位", "選擇衡量指標"], nx = 0, w = E('<div></div>'), ch = E('<div class="chips"></div>'), sl = E('<div></div>'), m = E('<p class="score"></p>');
+            C.slice().sort(function (a, b) { return a.length - b.length || (a < b ? -1 : 1) }).forEach(function (t) { var c = E('<button class="chip">' + t + '</button>'); c.onclick = function () { if (t === C[nx]) { var s = $$('.slot', sl)[nx]; s.innerHTML = (nx + 1) + '. ' + t + ' <span class="tag" style="margin:0 0 0 6px">後台位置：' + ["行銷活動", "廣告組合", "廣告", "廣告組合", "廣告管理員的報表欄位"][nx] + '</span>'; s.classList.add('f'); c.classList.add('used'); nx++; m.textContent = nx == 5 ? '🎉 順序正確！提醒：這是「思考順序」，不是後台的設定順序。例如素材會先構思，但在後台是到「廣告」層才設定；預算與版位則在「廣告組合」層。' : '' } else { m.textContent = '再想想：下一步應該是什麼？' } }; ch.appendChild(c) });
+            for (var i = 0; i < 5; i++)sl.appendChild(E('<div class="slot"></div>'));[ch, sl, m].forEach(function (x) { w.appendChild(x) }); return w
+        }
+
+        /* 指標探索 + 計算機 */
+        function metrics() {
+            var M = { "觸及": ["觸及人數", "CPM"], "流量": ["CTR", "CPC", "連結點擊"], "互動": ["互動率", "單次互動成本"], "潛在顧客": ["潛在顧客數", "CPA（單筆成本）"], "銷售": ["轉換率", "CPA", "ROAS"] }, w = E('<div></div>'), c = E('<div class="chips"></div>'), p = E('<div class="panel">選一個行銷目標，看看該盯哪些指標。</div>');
+            Object.keys(M).forEach(function (k) { var b = E('<button class="chip">' + k + '</button>'); b.onclick = function () { $$('.chip', c).forEach(function (x) { x.classList.remove('used') }); p.innerHTML = '目標「' + k + '」主要看：<b>' + M[k].join('、') + '</b>，其他指標當參考就好。' }; c.appendChild(b) });
+            var F = [["spend", "花費 NT$", 3000], ["imp", "曝光", 50000], ["clk", "點擊", 800], ["cv", "轉換", 20], ["rev", "營收 NT$", 9000]];
+            var k = E('<div class="calc"></div>'); F.forEach(function (f) { k.appendChild(E('<div><label>' + f[1] + '</label><input type="text" inputmode="numeric" id="f_' + f[0] + '" value="' + f[2] + '"></div>')) }); var r = E('<div class="res"></div>');
+            function calc() { var v = {}; F.forEach(function (f) { v[f[0]] = +$('#f_' + f[0], k).value || 0 }); var d = function (a, b, x) { return b ? (a / b * (x || 1)).toFixed(2) : '—' }; r.innerHTML = '<div>CTR 點擊率<b>' + d(v.clk * 100, v.imp) + '%</b>比率・點擊÷曝光</div><div>CPC<b>' + d(v.spend, v.clk) + '</b>成本・花費÷點擊</div><div>CPM<b>' + d(v.spend, v.imp, 1000) + '</b>成本・花費÷曝光×1000</div><div>CPA<b>' + d(v.spend, v.cv) + '</b>成本・花費÷轉換</div><div>ROAS<b>' + d(v.rev, v.spend) + '</b>比率（倍數）・營收÷花費</div>' }
+            k.oninput = calc; calc();[c, p, E('<p class="sub" style="margin-top:18px">🧮 改改看數字，自己算算看各項指標：</p>'), k, r].forEach(function (x) { w.appendChild(x) }); return w
+        }
+
+        function review() {
+            var w = E('<div></div>'), H = function (t) { return E('<p class=score style=margin-top:20px>' + t + '</p>') };
+            var R = [['第 1 週：後台與漏斗', '三層架構與後台位置；漏斗分認知、考慮、轉換，各階段的目標、受眾、素材、指標都不同。'], ['第 2 週：受眾與素材', '受眾類型與適用階段；素材角度、文案結構、一次只改一個變數；思考順序不等於後台設定順序。'], ['第 3 週：指標與優化', '指標分數量、比率、成本三類；依目標挑指標，診斷時一層層排除原因。']], g = E('<div class=grid></div>');
+            R.forEach(function (r) { var b = E('<button class=term><b>' + r[0] + '</b><div class=d>' + r[1] + '</div></button>'); b.onclick = function () { b.classList.toggle('open') }; g.appendChild(b) });
+            var K = ['說得出三層架構分別負責什麼', '能自己建立一則基本廣告', '能說出漏斗三個階段與對應的目標', '能依漏斗階段選擇受眾', '能規劃素材角度並設計測試表', '分得清數量、比率、成本三類指標', '知道學習期不要頻繁調整', '成效不好時，會一層層排除原因'], kc = E('<div class=opts></div>'), kp = E('<p class=sub></p>');
+            function kn() { var n = $$('.sel', kc).length; kp.textContent = '已掌握 ' + n + ' / ' + K.length + (n == K.length ? '　🎉 太棒了！' : '　點一下勾選你已經有把握的項目') }
+            K.forEach(function (t) { var b = E('<button class=opt>☐ ' + t + '</button>'); b.onclick = function () { b.classList.toggle('sel'); b.textContent = (b.classList.contains('sel') ? '☑ ' : '☐ ') + t; kn() }; kc.appendChild(b) }); kn();
+            var X = [['廣告組合切太細', '預算被分散，每組都學不起來。→ 先合併成少數幾組，用廣泛受眾開始。'], ['太早下結論', '1 到 2 天的數據波動很大。→ 等學習期結束、累積足夠資料再判斷。'], ['一次改很多東西', '不知道是哪個調整有效。→ 每次只改一個變數。'], ['忽略追蹤設定', '沒有轉換資料就無法優化。→ 先確認 Pixel 與購買事件。'], ['看錯指標', '目標是購買卻只看點擊率。→ 依目標挑指標。'], ['素材只做一種', '沒有比較就不知道好壞。→ 至少準備 2 到 3 個版本測試。']], xg = E('<div class=grid></div>');
+            X.forEach(function (x) { var b = E('<button class=term><b>❌ ' + x[0] + '</b><div class=d>' + x[1] + '</div></button>'); b.onclick = function () { b.classList.toggle('open') }; xg.appendChild(b) });
+            var P = [['曝光高、點擊少', '改素材與文案：換開頭第一句、換圖片或影片，做 A/B 測試。'], ['點擊多、沒轉換', '先確認轉換事件，再看落地頁體驗、價格與結帳流程。'], ['成本太高', '看是哪一項偏高：CPM 高→受眾或素材；CPC 高→素材；CPA 高→轉換流程。'], ['預算花不出去', '檢查預算是否太低、受眾是否太窄、廣告是否通過審核。']], pc = E('<div class=chips></div>'), pp = E('<div class=panel>選一個你最可能遇到的狀況，看看下一步怎麼做。</div>');
+            P.forEach(function (p) { var b = E('<button class=chip>' + p[0] + '</button>'); b.onclick = function () { pp.innerHTML = '<b>' + p[0] + '</b><br>' + p[1] }; pc.appendChild(b) });
+            var pl = E('<div class=panel><b>第 1 週</b>：讓廣告跑完學習期，先不要亂改<br><b>第 2 週</b>：測試 2 到 3 個不同素材<br><b>第 3 週</b>：關掉差的，放大表現好的<br><b>第 4 週</b>：整理成果，決定下個月的預算與方向</div>');
+            [H('① 三週重點回顧'), g, H('② 自我檢核'), kp, kc, H('③ 常見錯誤與解法'), xg, H('④ 遇到狀況怎麼辦'), pc, pp, H('⑤ 接下來 4 週練習計畫'), pl].forEach(function (x) { w.appendChild(x) }); return w
+        }
+        function goal(a) { return E('<div class=panel><b>本週學完你會…</b><ul>' + a.map(function (x) { return '<li>' + x + '</li>' }).join('') + '</ul></div>') }
+        function tabsInfo(items) { var w = E('<div></div>'), c = E('<div class=chips></div>'), p = E('<div class=panel></div>'); items.forEach(function (it, i) { var b = E('<button class=chip>' + it[0] + '</button>'); b.onclick = function () { $$('.chip', c).forEach(function (x, j) { x.style.borderColor = i === j ? 'var(--brand)' : '' }); p.innerHTML = it[1] }; c.appendChild(b) }); w.appendChild(c); w.appendChild(p); c.firstChild.click(); return w }
+        function funnel() {
+            var S = [['認知 Awareness', '還不認識你的人（冷受眾）', '觸及、影片觀看', '廣泛、興趣、類似受眾', '品牌故事、痛點共鳴、吸睛短影片', 'CPM、觸及、頻次、影片觀看率', '咖啡店新開幕，用短影片介紹店的特色'], ['考慮 Consideration', '知道你但還在比較的人（溫受眾）', '流量、互動、潛在顧客', '互動過的人、影片觀看者、網站訪客', '產品介紹、客戶見證、常見問題、輪播', 'CTR、CPC、CPL（單筆詢問成本）', '提供試喝券，收集詢問名單'], ['轉換 Conversion', '有購買意願的人（熱受眾）', '銷售、潛在顧客（預約）', '傳過訊息或互動過的人、舊客、網站訪客（有 Pixel 時）', '限時優惠、評價、保證、明確行動呼籲', '轉換率、CPA、ROAS', '提醒看過商品但未結帳的人，給限時折扣']], L = ['對象', '行銷目標', '受眾', '素材', '主要指標', '例子'], w = E('<div></div>'), f = E('<div style=display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:12px></div>'), p = E('<div class=panel></div>');
+            S.forEach(function (s, i) { var b = E('<button class=opt style=width:' + (100 - i * 16) + '%;text-align:center><b>' + s[0] + '</b></button>'); b.onclick = function () { $$('.opt', f).forEach(function (x, j) { x.classList.toggle('sel', i === j) }); p.innerHTML = '<b>' + s[0] + '</b><ul>' + L.map(function (l, k) { return '<li><b>' + l + '：</b>' + s[k + 1] + '</li>' }).join('') + '</ul>' }; f.appendChild(b) });
+            w.appendChild(f); w.appendChild(p); w.appendChild(E('<p class=sub style=margin-top:10px>漏斗是思考框架，現實中人會來回穿梭，不一定照順序走。</p>')); f.firstChild.click(); return w
+        }
+        function creative() {
+            var A = [['痛點共鳴', '先點出對方的困擾，讓他覺得「這說的是我」', '認知、考慮', '影片、Reels'], ['好處說明', '直接說你能給對方什麼具體好處', '考慮', '圖片、輪播'], ['社會認同', '評價、見證、使用人數', '考慮、轉換', '圖片、見證影片'], ['限時優惠', '給對方現在就行動的理由', '轉換', '圖片、輪播'], ['教學知識', '提供有用的資訊，建立專業感', '認知、考慮', '影片、輪播']], CT = ['了解詳情', '立即購買', '馬上預約', '傳送訊息', '立即報名'], a = 0,
+            w = E('<div class=row><div><b>① 選素材角度</b><div class=opts id=ao></div><p class=sub style=margin-top:12px>② 寫文案（開頭 → 好處 → 行動）</p><input type=text id=ch placeholder=開頭一句話：點出痛點或引起好奇><input type=text id=cb placeholder=好處：你能給對方什麼？><select id=cc></select><div class=panel id=ai></div></div><div class=ad><div class=adh><div class=av>店</div><div><b>你的粉絲專頁</b><small>贊助</small></div></div><p id=pt></p><div class=adimg>🎬</div><div class=adf><b>標題位置</b><span class=cta id=pcc></span></div></div></div>');
+            var ao = $('#ao', w), ai = $('#ai', w), ch = $('#ch', w), cb = $('#cb', w), cc = $('#cc', w); cc.innerHTML = CT.map(function (c, i) { return '<option value=' + i + '>' + c + '</option>' }).join('');
+            function upd() { var x = A[a]; ai.innerHTML = '<b>' + x[0] + '</b>：' + x[1] + '<br>適合階段：' + x[2] + '<br>建議格式：' + x[3]; $('#pt', w).innerHTML = (ch.value || '（開頭一句話）') + '<br>' + (cb.value || '（好處說明）'); $('#pcc', w).textContent = CT[cc.value]; $$('.opt', ao).forEach(function (b, i) { b.classList.toggle('sel', i === a) }) }
+            A.forEach(function (x, i) { var b = E('<button class=opt>' + x[0] + '<small>' + x[2] + '</small></button>'); b.onclick = function () { a = i; upd() }; ao.appendChild(b) }); ch.oninput = cb.oninput = cc.onchange = upd; upd(); return w
+        }
+        function classify() {
+            var M = [['曝光', 0, ''], ['觸及', 0, ''], ['點擊', 0, ''], ['轉換', 0, ''], ['CTR', 1, '點擊 ÷ 曝光'], ['轉換率', 1, '轉換 ÷ 點擊'], ['互動率', 1, '互動 ÷ 曝光'], ['ROAS', 1, '營收 ÷ 花費（倍數）'], ['CPM', 2, '花費 ÷ 曝光 × 1000'], ['CPC', 2, '花費 ÷ 點擊'], ['CPA', 2, '花費 ÷ 轉換'], ['CPL', 2, '花費 ÷ 潛在顧客數']], B = [['數量', '一個計數，例如幾次、幾人'], ['比率', '%或倍數，看效率'], ['成本', '金額，每個結果花多少']], cur = -1, w = E('<div></div>'), ch = E('<div class=chips></div>'), bs = E('<div class=grid></div>'), m = E('<p class=score>先點一個指標，再點它所屬的分類。</p>');
+            M.forEach(function (x, i) { var c = E('<button class=chip>' + x[0] + '</button>'); c.onclick = function () { cur = i; $$('.chip', ch).forEach(function (y, j) { y.style.borderColor = j === i ? 'var(--brand)' : '' }); m.textContent = '「' + x[0] + '」屬於哪一類？' }; ch.appendChild(c) });
+            B.forEach(function (b, k) { var d = E('<div class=panel style=cursor:pointer><b>' + b[0] + '</b><br><small>' + b[1] + '</small><div></div></div>'); d.onclick = function () { if (cur < 0) return; var x = M[cur], c = $$('.chip', ch)[cur]; if (c.classList.contains('used')) return; if (x[1] === k) { c.classList.add('used'); $('div', d).insertAdjacentHTML('beforeend', '<div>✓ <b>' + x[0] + '</b> ' + x[2] + '</div>'); m.textContent = '答對了！'; if ($$('.chip.used', ch).length == M.length) m.textContent = '🎉 全部分對！CTR 是比率、CPC 是成本，兩者不要搞混。' } else m.textContent = '再想想：「' + x[0] + '」是' + (x[1] == 0 ? '一個計數' : x[1] == 1 ? '一個比率或倍數' : '一個金額') + '，要放哪一類？' }; bs.appendChild(d) });
+            [ch, m, bs].forEach(function (x) { w.appendChild(x) }); return w
+        }
+
+        function valueprop() {
+            var F = [['p', '你賣的是什麼？', '例：手沖咖啡豆訂閱'], ['a', '主要對象是誰？', '例：上班族'], ['b', '能帶給他什麼好處？（說好處，不是功能）', '例：每天早上不用出門，就能喝到現磨咖啡'], ['d', '跟別人有什麼不同？', '例：烘焙後 3 天內出貨'], ['e', '有什麼證據？', '例：500 位訂閱者、評價 4.8 星']], w = E('<div></div>'), o = E('<div class="panel"></div>');
+            F.forEach(function (f) { w.appendChild(E('<div><label class="sub">' + f[1] + '</label><input type="text" id="vp_' + f[0] + '" placeholder="' + f[2] + '"></div>')) });
+            function val(k) { return $('#vp_' + k, w).value.trim() } function g(k, t) { return val(k) || '（' + t + '）' }
+            function upd() { o.innerHTML = '<b>你的價值主張</b><br>給' + g('a', '對象') + '：' + g('p', '產品') + '，' + g('b', '好處') + '。<br>不同的是：' + g('d', '差異') + '。<br>證據：' + g('e', '證據') }
+            w.oninput = upd; upd(); w.appendChild(o);
+            var C = ['具體：沒有「高品質」「專業」這類空泛的詞', '說的是好處，不只是功能', '對象明確，看了知道是在講自己', '有證據：數字、評價或保證', '陌生人 5 秒內能說出你賣什麼'], ck = E('<div class="opts" style="margin-top:12px"></div>');
+            C.forEach(function (t) { var b = E('<button class="opt">☐ ' + t + '</button>'); b.onclick = function () { b.classList.toggle('sel'); b.textContent = (b.classList.contains('sel') ? '☑ ' : '☐ ') + t }; ck.appendChild(b) });
+            var bt = E('<button class="btn" style="margin-top:12px">把好處帶入下方文案練習</button>'); bt.onclick = function () { var t = document.getElementById('cb'); if (t) { t.value = val('b'); t.dispatchEvent(new Event('input', { bubbles: true })); bt.textContent = '已帶入 ✓' } };
+            w.appendChild(E('<p class="score" style="margin-top:16px">自我檢查</p>')); w.appendChild(ck); w.appendChild(bt); return w
+        }
+        function accounts() {
+            var S = [['建立或確認粉絲專頁', '廣告要以粉絲專頁的身分投放。還沒有的話，先建立一個。'], ['連結 Instagram（選用）', '想在 Instagram 投放，建議把專業帳號連結到粉絲專頁。'], ['建立或登入商業管理平台', '把粉絲專頁、廣告帳號放在同一個商業資產下管理，之後授權或換人比較方便。'], ['確認廣告帳號', '幣別與時區建立後就不能更改，請先確認再送出。'], ['設定付款方式', '新增付款方式，並了解扣款規則（有些帳號是花到一定金額才扣款）。'], ['資料集／Pixel（有網站，建議設定）', '追蹤網站訪客的行為，用於衡量轉換與再行銷。可用網站平台內建的整合來安裝，裝好後要確認有收到事件。']], w = E('<div></div>'), pg = E('<p class="sub"></p>'), ls = E('<div class="opts"></div>');
+            function up() { var n = $$('.sel', ls).length; pg.textContent = '完成 ' + n + ' / ' + S.length + '（介面名稱可能調整，以實際後台為準）' }
+            S.forEach(function (x, i) { var b = E('<button class="opt">☐ <b>' + (i + 1) + '. ' + x[0] + '</b><small>' + x[1] + '</small></button>'); b.onclick = function () { b.classList.toggle('sel'); $('b', b).previousSibling.textContent = b.classList.contains('sel') ? '☑ ' : '☐ '; up() }; ls.appendChild(b) });
+            w.appendChild(pg); w.appendChild(ls); up(); return w
+        }
+        function cl(S, note) {
+            var w = E('<div></div>'), pg = E('<p class="sub"></p>'), ls = E('<div class="opts"></div>'); function up() { pg.textContent = '完成 ' + $$('.sel', ls).length + ' / ' + S.length + (note || '') }
+            S.forEach(function (x, i) { var b = E('<button class="opt">☐ <b>' + (i + 1) + '. ' + x[0] + '</b>' + (x[1] ? '<small>' + x[1] + '</small>' : '') + '</button>'); b.onclick = function () { b.classList.toggle('sel'); b.firstChild.textContent = b.classList.contains('sel') ? '☑ ' : '☐ '; up() }; ls.appendChild(b) }); w.appendChild(pg); w.appendChild(ls); up(); return w
+        }
+        function bizmap() {
+            var N = [['商家資產（資產櫃）', '🗂️', '像公司的資產櫃，把粉專、廣告帳號、資料集等放在一起管理。', '換人、授權代操公司、調整權限，都在這裡統一處理。', '建議一開始就建立，不要只用個人帳號管理。'], ['粉絲專頁', '📄', '廣告的「身分」，廣告會以粉專名義出現。', '放在商家資產裡；Facebook 與 Instagram 廣告都需要連結一個粉專。', '沒有粉專無法投放，先建立並放進商家資產。'], ['Instagram 帳號', '📷', '想在 Instagram 以品牌名義投放時使用。', '連結到粉專或商家資產後，廣告才能以 IG 帳號名義出現。', '建議使用專業帳號（商業或創作者）。'], ['廣告帳號', '💳', '廣告、預算、付款與花費紀錄的「家」。', '放在商家資產裡；廣告管理員就是在管理它。', '幣別與時區建立後不能更改，要先確認。'], ['資料集', '📊', '收集網站、App 或離線行為的資料，例如瀏覽、加入購物車、購買。', '連結到廣告帳號，用來衡量成效與建立自訂受眾。', '沒有網站可以先不設定，不影響投放。'], ['人員與權限', '👥', '決定誰能管理哪些資產。', '可指派員工，也能授權外部夥伴。', '原則是只給需要的權限。']],
+            w = E('<div></div>'), box = E('<div style="border:2px dashed var(--brand);border-radius:14px;padding:12px;margin-bottom:12px"></div>'), hd = E('<div style="margin-bottom:10px"></div>'), g = E('<div class="grid"></div>'), p = E('<div class="panel"></div>');
+            function show(i, b) { $$('.opt', w).forEach(function (x) { x.classList.remove('sel') }); b.classList.add('sel'); var n = N[i]; p.innerHTML = '<b>' + n[1] + ' ' + n[0] + '</b><br>是什麼：' + n[2] + '<br>關係：' + n[3] + '<br>注意：' + n[4] }
+            N.forEach(function (n, i) { var b = E('<button class="opt"><b>' + n[1] + ' ' + n[0] + '</b></button>'); b.onclick = function () { show(i, b) }; (i ? g : hd).appendChild(b) });
+            box.appendChild(hd); box.appendChild(g);[box, p, E('<p class="sub" style="margin-top:10px">一句話記憶：粉專是廣告的身分，廣告帳號是廣告與帳單的家，資料集是成效的證據，商家資產把這些收在一起。（選單名稱可能調整，以實際後台為準）</p>')].forEach(function (x) { w.appendChild(x) }); $('.opt', w).click(); return w
+        }
+        function sim(k) {
+            var SC = [{ t: '咖啡店剛開幕，附近的人都還不認識，想先讓更多人知道。', o: ['觸及'], ho: '還不認識你的人，重點是被看見，適合「觸及」。', a: ['廣泛', '興趣'], ha: '冷受眾可用廣泛或興趣受眾；自訂與類似需要既有名單。', c: ['了解詳情', '傳送訊息'], hc: '認知階段不必逼購買，用「了解詳情」或「傳送訊息」；記得寫一句主要文字。' },
+            { t: '美甲工作室沒有網站，想讓新客人傳訊息或預約。', o: ['潛在顧客', '互動'], ho: '目標是收到詢問或預約，適合「潛在顧客」；用「互動」把人帶到訊息也可以。', a: ['廣泛', '興趣'], ha: '還不是熟客，用廣泛或興趣受眾；沒有網站，就沒有網站訪客受眾。', c: ['馬上預約', '傳送訊息'], hc: '按鈕要對應你要的動作：預約或傳訊息；記得寫主要文字。' },
+            { t: '你的店有 500 位舊客名單，想推出新品優惠，請他們回來。（主要文字至少寫 8 個字）', o: ['銷售', '潛在顧客', '互動'], ho: '舊客已經認識你，重點是促成行動；沒有網站追蹤購買時，可用潛在顧客或互動。', a: ['自訂'], ha: '有顧客名單，就用「自訂受眾」；之後還能用它建立類似受眾來擴大客群。', c: ['立即購買', '馬上預約', '傳送訊息', '立即報名'], hc: '舊客已有信任感，按鈕可以直接導向行動；主要文字要說清楚優惠的價值。', tl: 8, last: '<br>接下來，到實際後台照同樣的流程做一次。' }],
+            sc = SC[k], OB = ['觸及', '流量', '互動', '潛在顧客', '銷售'], AU = ['廣泛', '興趣', '自訂', '類似'], CT = ['了解詳情', '立即購買', '馬上預約', '傳送訊息', '立即報名'], S = { o: -1, a: -1 },
+            w = E('<div class="mock"></div>'), sn = E('<div class="panel" style="margin:10px"></div>'), tb = E('<div class="mtabs"></div>'), pn = [0, 1, 2].map(function () { return E('<div style="padding:10px"></div>') }), rs = E('<div class="panel" style="margin:10px">按下「檢查我的設定」看結果。</div>');
+            sn.innerHTML = '<b>情境：</b>' + sc.t;
+            function mk(par, arr, key) { var o = E('<div class="opts"></div>'); arr.forEach(function (t, i) { var b = E('<button class="opt">' + t + '</button>'); b.onclick = function () { S[key] = i; $$('.opt', o).forEach(function (x, j) { x.classList.toggle('sel', i === j) }) }; o.appendChild(b) }); par.appendChild(o) }
+            pn[0].innerHTML = '<b>選擇行銷目標</b><p class="sub">這一層決定「你要什麼結果」。</p>'; mk(pn[0], OB, 'o');
+            pn[1].innerHTML = '<b>選擇受眾</b><p class="sub">這一層決定「給誰看、花多少、在哪出現」。</p>'; mk(pn[1], AU, 'a');
+            var rg = E('<div><label class="sub">每日預算：<b>NT$200</b></label><input type="range" min="100" max="1000" step="50" value="200"></div>'); rg.oninput = function (e) { $('b', rg).textContent = 'NT$' + e.target.value }; pn[1].appendChild(rg);
+            pn[1].appendChild(E('<div><label class="sub">版位</label><select><option>自動版位（建議）</option><option>僅 Instagram</option><option>僅 Facebook</option></select></div>'));
+            pn[2].innerHTML = '<b>設計廣告</b><p class="sub">這一層決定「看到什麼」。</p><label class="sub">格式</label><select><option>圖片</option><option>影片</option><option>輪播</option></select><label class="sub">主要文字</label><input type="text" class="tx" placeholder="用一句話說明你能給對方什麼好處"><label class="sub">行動呼籲按鈕</label><select class="ct">' + CT.map(function (c) { return '<option>' + c + '</option>' }).join('') + '</select>';
+            function tab(i) { pn.forEach(function (x, j) { x.style.display = i === j ? '' : 'none' }); $$('button', tb).forEach(function (x, j) { x.classList.toggle('on', i === j) }) }
+            ['① 行銷活動', '② 廣告組合', '③ 廣告'].forEach(function (t, i) { var b = E('<button>' + t + '</button>'); b.onclick = function () { tab(i) }; tb.appendChild(b) });
+            var bt = E('<button class="btn">檢查我的設定</button>'), bw = E('<div style="padding:0 10px"></div>'); bw.appendChild(bt);
+            bt.onclick = function () {
+                var tx = $('.tx', w).value.trim(), c = CT[$('.ct', w).selectedIndex], o0 = S.o >= 0 && sc.o.indexOf(OB[S.o]) >= 0, o1 = S.a >= 0 && sc.a.indexOf(AU[S.a]) >= 0, o2 = sc.c.indexOf(c) >= 0 && tx.length >= (sc.tl || 1);
+                rs.innerHTML = (o0 ? '✅' : '❌') + ' ① 行銷活動：' + (o0 ? '目標選對了。' : S.o < 0 ? '還沒選目標。' : sc.ho) + '<br>' + (o1 ? '✅' : '❌') + ' ② 廣告組合：' + (o1 ? '受眾選對了。' : S.a < 0 ? '還沒選受眾。' : sc.ha) + '<br>' + (o2 ? '✅' : '❌') + ' ③ 廣告：' + (o2 ? '按鈕與文字都合適。' : sc.hc) + (o0 && o1 && o2 ? '<br><br><b>🎉 全部正確！</b>' + (sc.last || '') : '')
+            };
+            [sn, tb].concat(pn).concat([bw, rs]).forEach(function (x) { w.appendChild(x) }); tab(0); return w
+        }
+
+        function fold(a) { var d = E('<details class="card fold"><summary>📚 自學區（' + a.length + ' 項，點開查看）</summary></details>'); a.forEach(function (x) { d.appendChild(x) }); return d }
+        function placements() {
+            var P = [['Facebook 動態消息', '1:1 或 4:5', '最基本的位置，出現在朋友貼文之間。'], ['Instagram 動態消息', '1:1 或 4:5', 'IG 主畫面的貼文流。'], ['限時動態 Stories', '9:16 直式', '全螢幕，文字要避開上下方的操作區。'], ['Reels', '9:16 直式', '短影片，前 3 秒要抓住注意。'], ['Messenger', '視位置而定', '適合引導對方開始對話。'], ['Audience Network', '多種', 'Meta 以外的合作 App。']],
+            w = E('<div></div>'), md = E('<div class="chips"></div>'), pn = E('<div class="panel"></div>'), ls = E('<div class="opts" style="margin:10px 0"></div>'), out = E('<div class="panel"></div>'), auto = true;
+            function upd() {
+                $$('.chip', md).forEach(function (c, i) { c.style.borderColor = (i == 0) === auto ? 'var(--brand)' : '' });
+                if (auto) { ls.style.display = 'none'; out.style.display = 'none'; pn.innerHTML = '<b>自動版位</b>：系統會自動把預算分配到成效較好的位置，不用自己挑，新手建議從這裡開始。<br>素材準備：<b>9:16 直式</b>與 <b>1:1 或 4:5</b> 兩種尺寸，就能涵蓋大多數位置。' }
+                else { ls.style.display = 'none'; out.style.display = 'none'; pn.innerHTML = '<b>手動版位</b>：自己決定廣告出現在哪些位置。適合素材只有特定尺寸，或發現某個位置成效很差想排除時；一般新手不需要。' }
+            }
+            ['自動版位（建議）', '手動版位'].forEach(function (t, i) { var b = E('<button class="chip">' + t + '</button>'); b.onclick = function () { auto = i == 0; upd() }; md.appendChild(b) });
+
+            [md, pn].forEach(function (x) { w.appendChild(x) }); upd(); return w
+        }
+        function wrapN() { var d = E('<div></div>'), a = arguments; for (var i = 0; i < a.length; i++) { if (i) d.appendChild(E('<div style="height:14px"></div>')); d.appendChild(a[i]) } return d }
+        function adanatomy() {
+            var D = [['粉專名稱與「贊助」標示', '廣告會以粉專（或 IG 帳號）的名義出現；「贊助」代表這是付費廣告。', '設定位置：第三層「廣告」，選擇以哪個粉專投放。'], ['主要文字', '素材上方的文案，先放最重要的價值。手機上只會先看到前兩行，後面會被收成「查看更多」。', '設定位置：第三層「廣告」。'], ['素材（圖片、影片、輪播）', '最先吸引注意的部分。素材的尺寸要配合版位：動態消息常用 1:1 或 4:5，限時動態與 Reels 用 9:16。', '設定位置：第三層「廣告」。'], ['標題', '素材下方的短標題，一句話說明這則廣告在講什麼。', '設定位置：第三層「廣告」。'], ['說明', '補充資訊，例如優惠或運送方式。部分版位不會顯示。', '設定位置：第三層「廣告」。'], ['行動呼籲按鈕', '你希望對方做的動作，例如了解詳情、立即購買、傳送訊息。要對應行銷目標。', '設定位置：第三層「廣告」。'], ['互動區', '讚、留言、分享。互動數會累積在這則廣告上，形成社會認同；有人留言記得回覆。', '這些數字是看廣告的人產生的，不是你設定的。']],
+            w = E('<div class="row2"></div>'), ad = E('<div style="border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card);font-size:14px;align-self:start"></div>'), p = E('<div class="panel" style="align-self:start">點廣告上的編號，看每個部分是什麼。<br><small>沒有網站時，按鈕可以改成「傳送訊息」，也不用顯示網址。</small></div>');
+            function pick(i) { $$('.hs', ad).forEach(function (x) { x.classList.toggle('on2', +x.dataset.i === i) }); var d = D[i]; p.innerHTML = '<b>' + (i + 1) + '. ' + d[0] + '</b><br>' + d[1] + '<br><small>' + d[2] + '</small>' }
+            function hs(i, html, st) { var x = E('<div class="hs" data-i="' + i + '" style="' + (st || '') + '">' + html + '<span class="bd">' + (i + 1) + '</span></div>'); x.onclick = function (e) { e.stopPropagation(); pick(i) }; return x }
+            ad.appendChild(hs(0, '<div style="display:flex;gap:8px;align-items:center;padding:10px"><div class="av">森</div><div><b>小森咖啡</b><small style="display:block;color:var(--muted);font-size:11px">贊助・🌐</small></div></div>'));
+            ad.appendChild(hs(1, '<div style="padding:0 34px 8px 10px">新品上市！手沖單品豆，早上 3 分鐘，在家喝到咖啡館的香氣。本週訂購享 9 折。</div>'));
+            ad.appendChild(hs(2, '<div class="adimg" style="background:linear-gradient(135deg,#d7a86e,#8b5e3c);font-size:64px">☕</div>'));
+            var bar = E('<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px;background:var(--bg)"></div>'), l = E('<div style="min-width:0"><div style="font-size:11px;color:var(--muted)">mori-coffee.example</div></div>');
+            l.appendChild(hs(3, '<div style="padding-right:24px"><b>手沖單品豆訂閱</b></div>')); l.appendChild(hs(4, '<div style="padding-right:24px;color:var(--muted);font-size:13px">每月新鮮烘焙，免運宅配</div>'));
+            bar.appendChild(l); bar.appendChild(hs(5, '<span class="cta" style="display:inline-block;margin:6px 14px 6px 0">了解詳情</span>')); ad.appendChild(bar);
+            ad.appendChild(hs(6, '<div style="padding:6px 34px 0 10px;font-size:12px;color:var(--muted)">👍❤️ 128　12 則留言　5 次分享</div><div style="display:flex;justify-content:space-around;padding:8px;color:var(--muted)"><span>👍 讚</span><span>💬 留言</span><span>↗ 分享</span></div>', 'border-top:1px solid var(--line)'));
+            w.appendChild(ad); w.appendChild(p); return w
+        }
+        var NV = 0;
+        function art() { NV++; var id = 'ga' + NV; return '<svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" style="display:block;width:100%;height:100%"><defs><linearGradient id="' + id + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3d9b1"/><stop offset="1" stop-color="#c58b57"/></linearGradient></defs><rect width="100" height="100" fill="url(#' + id + ')"/><ellipse cx="50" cy="80" rx="27" ry="5" fill="#8b5e3c" opacity=".35"/><path d="M32 48h36v14a18 18 0 0 1-36 0z" fill="#fff"/><path d="M68 52h4a6 6 0 0 1 0 12h-5" fill="none" stroke="#fff" stroke-width="3"/><ellipse cx="50" cy="48" rx="18" ry="4" fill="#6b4226"/><path d="M44 40c-3-5 3-7 0-12M52 40c-3-5 3-7 0-12M60 40c-3-5 3-7 0-12" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" opacity=".85"/><ellipse cx="16" cy="88" rx="5" ry="3" fill="#6b4226" opacity=".55" transform="rotate(-30 16 88)"/><ellipse cx="86" cy="90" rx="5" ry="3" fill="#6b4226" opacity=".55" transform="rotate(25 86 90)"/><ellipse cx="88" cy="14" rx="5" ry="3" fill="#6b4226" opacity=".4" transform="rotate(-20 88 14)"/></svg>' }
+        function AR(r) { return '<div style="aspect-ratio:' + r + ';width:100%">' + art() + '</div>' }
+        function placementPreview() {
+            var AV = '<div class="av" style="width:26px;height:26px;font-size:12px;flex:none">森</div>',
+            P = [{ n: 'Facebook 動態消息', r: '1:1 或 4:5', d: '廣告混在朋友貼文之間，主要文字、標題、說明與按鈕都會顯示。', t: '主要文字的前兩行要先講價值。', h: function () { return '<div style="display:flex;gap:6px;align-items:center;padding:8px">' + AV + '<div><b>小森咖啡</b><br><span style="color:var(--muted);font-size:10px">贊助・🌐</span></div></div><div style="padding:0 8px 6px">新品上市！手沖單品豆，本週訂購享 9 折。</div>' + AR('1/1') + '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px;background:var(--bg)"><div><span style="color:var(--muted);font-size:10px">mori-coffee.example</span><br><b>手沖單品豆訂閱</b></div><span class="cta">了解詳情</span></div><div style="padding:6px 8px;color:var(--muted)">👍 ❤️ 128　12 則留言</div>' } },
+            { n: 'Instagram 動態消息', r: '4:5（最佔版面），也可用 1:1', d: '以視覺為主，文字較短，按鈕在素材下方的色條。', t: '視覺要在手機上一眼看得懂，文案要精簡。', h: function () { return '<div style="display:flex;gap:6px;align-items:center;padding:8px">' + AV + '<div><b>mori.coffee</b><br><span style="color:var(--muted);font-size:10px">贊助</span></div></div>' + AR('4/5') + '<div style="background:#0095f6;color:#fff;padding:7px 10px;display:flex;justify-content:space-between"><span>了解詳情</span><span>›</span></div><div style="padding:6px 10px">♡ 💬 ✈<br><b>mori.coffee</b> 新品上市！手沖單品豆，本週訂購享 9 折。</div>' } },
+            { n: '限時動態 Stories', r: '9:16 直式', d: '全螢幕，停留時間很短，按鈕在畫面下方。', t: '上方約 14%、下方約 20% 會被帳號資訊與按鈕蓋住，文字與重點要避開。', v: 1, s: [['left:0;right:0;top:0;height:14%', '避開'], ['left:0;right:0;bottom:0;height:20%', '避開']], h: function () { return '<div style="position:relative;aspect-ratio:9/16">' + art() + '<div style="position:absolute;top:8px;left:8px;right:8px;height:3px;background:rgba(255,255,255,.55);border-radius:3px"></div><div style="position:absolute;top:16px;left:8px;color:#fff;display:flex;gap:6px;align-items:center">' + AV + '<b>小森咖啡</b><span style="font-size:10px">贊助</span></div><div style="position:absolute;bottom:12px;left:0;right:0;text-align:center;color:#fff"><div style="font-size:16px;line-height:1">⌃</div><span class="cta" style="background:#fff;color:#111">了解詳情</span></div>@@</div>' } },
+            { n: 'Reels', r: '9:16 直式', d: '全螢幕短影片，右側有互動按鈕，下方有說明文字與按鈕。', t: '避開上方約 14%、下方約 35%、左右約 6%；前 3 秒要抓住注意。', v: 1, s: [['left:0;right:0;top:0;height:14%', '避開'], ['left:0;right:0;bottom:0;height:35%', '避開（說明與按鈕）'], ['left:0;width:6%;top:0;bottom:0', ''], ['left:auto;right:0;width:6%;top:0;bottom:0', '']], h: function () { return '<div style="position:relative;aspect-ratio:9/16">' + art() + '<div style="position:absolute;right:8px;bottom:36%;color:#fff;display:flex;flex-direction:column;gap:12px;align-items:center;font-size:16px"><span>♡</span><span>💬</span><span>↗</span><span>⋯</span></div><div style="position:absolute;left:8px;right:40px;bottom:10px;color:#fff"><div style="display:flex;gap:6px;align-items:center">' + AV + '<b>小森咖啡</b><span style="font-size:10px">贊助</span></div><div style="margin:4px 0;font-size:11px">新品上市！手沖單品豆，本週 9 折…更多</div><span class="cta" style="background:#fff;color:#111;display:block;text-align:center">了解詳情</span></div>@@</div>' } },
+            { n: 'Messenger', r: '依位置而定（收件匣、限時動態）', d: '出現在聊天列表，像一則訊息，點開後可以開始對話。', t: '標題與第一句話要像「邀請」，不要像廣告。', h: function () { var row = function (t) { return '<div style="display:flex;gap:8px;padding:8px;align-items:center"><div style="width:40px;height:40px;border-radius:50%;background:var(--line);flex:none"></div><div><b>' + t + '</b><br><span style="color:var(--muted);font-size:11px">好久不見，最近還好嗎？</span></div></div>' }; return '<div style="aspect-ratio:9/16;overflow:hidden"><div style="padding:10px;font-weight:700;font-size:15px">聊天</div>' + row('小美') + '<div style="display:flex;gap:8px;padding:8px;background:var(--soft)"><div style="width:44px;height:44px;border-radius:10px;overflow:hidden;flex:none">' + art() + '</div><div style="min-width:0"><b>小森咖啡</b> <span style="font-size:10px;color:var(--muted)">贊助</span><br><span style="font-size:11px">新品上市！手沖單品豆，本週訂購享 9 折…</span></div></div>' + row('阿杰') + row('家人群組') + '</div>' } },
+            { n: 'Audience Network', r: '多種（橫幅、插頁、獎勵式）', d: '出現在 Meta 以外合作的 App 與網站，例如遊戲或工具 App。', t: '新手用自動版位時，系統會自動包含，不需要特別設計。', h: function () { return '<div style="aspect-ratio:9/16;position:relative;background:linear-gradient(#cfe3ff,#eaf3ff);color:#223"><div style="padding:10px;font-weight:700">🎮 某個遊戲 App</div><div style="margin-top:70px;text-align:center;color:#667">（App 本身的畫面）</div><div style="position:absolute;left:0;right:0;bottom:0;background:var(--card);color:var(--text);padding:8px;display:flex;gap:8px;align-items:center"><div style="width:44px;height:44px;border-radius:8px;overflow:hidden;flex:none">' + art() + '</div><div style="flex:1;min-width:0"><b>手沖單品豆訂閱</b><br><span style="font-size:10px;color:var(--muted)">廣告・小森咖啡</span></div><span class="cta">了解詳情</span></div></div>' } }],
+            cur = 0, safe = false, w = E('<div></div>'), cs = E('<div class="chips"></div>'), row = E('<div class="row2" style="margin-top:12px"></div>'), fr = E('<div></div>'), info = E('<div class="panel" style="align-self:start"></div>');
+            function draw() {
+                $$('.chip', cs).forEach(function (c, i) { c.style.borderColor = i === cur ? 'var(--brand)' : '' }); var p = P[cur], ov = '';
+                if (p.v && safe) ov = p.s.map(function (x) { return '<div class="safe" style="' + x[0] + '">' + x[1] + '</div>' }).join('');
+                fr.innerHTML = '<div class="ph"><div class="phi">' + p.h().replace('@@', ov) + '</div></div>';
+                info.innerHTML = '<b>' + p.n + '</b><br>建議尺寸：' + p.r + '<br>' + p.d + '<br><b>素材重點：</b>' + p.t + (p.v ? '<br><br><button class="btn" id="sf">' + (safe ? '隱藏' : '顯示') + '安全區</button>' : '') + '<br><small style="color:var(--muted)">尺寸與安全區為一般建議，Meta 會調整，以後台提示為準。</small>';
+                var b = $('#sf', info); if (b) b.onclick = function () { safe = !safe; draw() }
+            }
+            P.forEach(function (p, i) { var c = E('<button class="chip">' + p.n + '</button>'); c.onclick = function () { cur = i; safe = false; draw() }; cs.appendChild(c) });
+            row.appendChild(fr); row.appendChild(info); w.appendChild(cs); w.appendChild(row); draw(); return w
+        }
+        var OLD = [
+            function () {
+                return [head('第一週：基礎概念與後台介面', '基礎概念 → 介面導覽 → 建立第一則廣告'),
+                goal(['說得出 Meta 廣告的運作方式與出現位置', '記住三層架構，看得懂廣告管理員', '能自己建立一則最基本的廣告（可不發布）']),
+                card('單元 1', '基礎概念', '點一下名詞卡，看白話解釋。', terms()),
+                card('單元 1', '三層架構', '點每一層，看它負責什麼。', layers()),
+                card('單元 2', '模擬廣告管理員', '這是練習用的假畫面，隨便點不怕按錯。', mock()),
+                card('單元 3', '一步一步建立你的第一則廣告', '邊選邊看右邊的廣告預覽，也留意每一步屬於哪一層。', builder()),
+                card('小測驗', '確認一下學會了沒', '', quiz([['「這個廣告要給誰看」是在哪一層設定？', ['行銷活動', '廣告組合', '廣告'], 1, '受眾、預算、版位都在廣告組合。'], ['廣告的圖片和文案在哪一層？', ['行銷活動', '廣告組合', '廣告'], 2, '素材、文案、按鈕都在廣告這一層。'], ['想收集詢問資料，應選哪個行銷目標？', ['觸及', '流量', '潛在顧客', '互動'], 2, '潛在顧客目標就是為了收集詢問與表單。']]))]
+            },
+            function () {
+                return [head('第二週：行銷漏斗與目標設定', '漏斗概念 → 行銷目標對應 → 情境練習'),
+                goal(['說出漏斗三個階段，以及各階段的受眾、素材與指標', '依商業目的選對行銷目標', '理解為什麼不同階段要用不同的打法']),
+                card('單元 1', '行銷漏斗', '點每一個階段，看對應的目標、受眾、素材和指標。', funnel()),
+                card('單元 2', '五個行銷目標', '點一下，看它適合哪個階段、要看什麼指標。', tabsInfo([['觸及', '讓最多人看到。<br>階段：認知。<br>看：觸及、CPM、頻次。'], ['流量', '帶人去網站或粉專。<br>階段：考慮。<br>看：CTR、CPC、到達網頁瀏覽。'], ['互動', '讓人按讚、留言、分享。<br>階段：認知到考慮。<br>看：互動率、單次互動成本。'], ['潛在顧客', '收集詢問或表單。<br>階段：考慮到轉換。<br>看：CPL、潛在顧客數。'], ['銷售', '促成購買。<br>階段：轉換。<br>看：轉換率、CPA、ROAS。<br>提醒：需要網站與 Pixel 追蹤購買事件；沒有網站可改用「潛在顧客」或「互動」。']])),
+                card('單元 3', '情境練習', '讀情境，判斷階段、目標與受眾。', quiz([['咖啡店剛開幕，附近的人都還不認識，主要處在漏斗的哪個階段？', ['認知', '考慮', '轉換'], 0, '還不認識你的人屬於認知階段，目標通常是觸及或影片觀看。'], ['有人看了商品頁但沒結帳，最適合怎麼接觸？', ['廣泛受眾＋品牌故事', '網站訪客自訂受眾＋限時優惠或評價', '類似受眾＋品牌故事'], 1, '已經有興趣的人屬於轉換階段，用自訂受眾搭配推他一把的素材。'], ['漏斗上層（認知）最適合看哪些指標？', ['ROAS', 'CPM 與觸及', 'CPA'], 1, '認知階段重點是花多少錢讓多少人看到，ROAS 與 CPA 是看轉換的。'], ['美甲工作室想讓客人來預約，最適合哪個目標？', ['觸及', '潛在顧客', '互動'], 1, '預約屬於收集詢問，用潛在顧客。']]))]
+            },
+            function () {
+                return [head('第三週：受眾策略', '受眾類型 → 依漏斗配受眾 → 情境練習'),
+                goal(['分辨核心、自訂、類似、廣泛與排除受眾', '依漏斗階段選擇合適的受眾', '知道什麼時候該排除某些人']),
+                card('單元 1', '受眾類型', '點每一種，看它是什麼、什麼時候用。', tabsInfo([['核心受眾', '<b>自己設定條件</b>：地區、年齡、興趣、行為。<br>適合：客群明確、剛開始投放，認知到考慮階段。<br>例：台北 25 到 40 歲、對咖啡有興趣。'], ['自訂受眾', '<b>用你自己的資料建立</b>：網站訪客、顧客名單、粉專或 IG 互動過的人。<br>適合：考慮到轉換階段，做再行銷。<br>網站訪客需要 Pixel；沒有網站的話，可用粉專、IG 互動過的人或影片觀看者。名單要有一定人數。'], ['類似受眾', '<b>找跟現有顧客相像的人</b>。<br>適合：擴大客群。<br>來源名單品質越好，找到的人越準。'], ['廣泛受眾', '<b>只設地區與年齡</b>，交給演算法找人。<br>適合：預算足夠、素材多樣；也是 Meta 目前常見的建議。<br>要靠好的素材，讓演算法有學習的依據。'], ['排除受眾', '<b>不想打給誰</b>：例如剛購買的人、員工。<br>避免預算浪費，也避免打擾老客人。']])),
+                card('單元 2', '依漏斗配受眾', '回頭看一次漏斗，想想每一層該用哪種受眾。', funnel()),
+                card('單元 3', '情境練習', '', quiz([['已有 500 位顧客名單，想找更多像他們的人？', ['核心受眾', '自訂受眾', '類似受眾'], 2, '用顧客名單建立類似受眾。'], ['想提醒看過網站但沒購買的人回來？', ['廣泛受眾', '類似受眾', '自訂受眾（網站訪客）'], 2, '網站訪客屬於自訂受眾，用來再行銷。'], ['想避免廣告浪費在剛買過的人身上，可以？', ['把顧客名單設為排除受眾', '提高預算', '改用觸及目標'], 0, '排除受眾可以避免重複打給已轉換的人。'], ['預算足夠、素材多樣時，為什麼常建議廣泛受眾？', ['讓演算法有更大空間找到會行動的人', '因為最便宜', '因為不用做素材'], 0, '受眾放寬，演算法才有空間依素材表現去找人。']]))]
+            },
+            function () {
+                return [head('第四週：廣告素材規劃', '素材角度與文案 → 素材測試設計 → 練習'),
+                goal(['依漏斗階段選擇素材角度與格式', '用簡單結構寫出文案', '設計一份一次只改一個變數的素材測試表']),
+                card('單元 1', '素材角度與文案練習', '選角度、寫文案，右邊即時預覽。', creative()),
+                card('單元 2', '產品價值整理', '文案的核心，是把價值說清楚。先回答這五題，再寫文案。', valueprop()),
+                card('單元 2', '素材測試表', '一次只改一個變數，才知道是哪個調整有效。', E('<div class=panel><div class=tw><table><thead><tr><th>測試項目</th><th>版本 A</th><th>版本 B</th><th>其他條件</th></tr></thead><tbody><tr><td>開頭一句話</td><td>痛點式</td><td>好處式</td><td>相同</td></tr><tr><td>主視覺</td><td>產品圖</td><td>使用情境圖</td><td>相同</td></tr><tr><td>格式</td><td>圖片</td><td>影片</td><td>相同</td></tr></tbody></table></div><br>各版本用相同預算與受眾，等學習期過後再比較。</div>')),
+                card('單元 3', '小測驗', '', quiz([['一次 A/B 測試，應該怎麼設計？', ['A、B 圖片和文案都不同', '只改開頭那句話，其他一樣', '同時測五個版本各 NT$10'], 1, '只改一個變數，結果才看得出原因。'], ['對還不認識你的冷受眾，開頭應該？', ['先講優惠價', '先點出對方的困擾或引起好奇', '放長篇產品規格'], 1, '冷受眾還沒有購買理由，先抓住注意力。'], ['素材點擊率一直很低，應該先？', ['換開頭與主視覺', '增加預算', '調整付款方式'], 0, '點擊率低通常是素材不夠吸引人。']]))]
+            },
+            function () {
+                return [head('第五週：建立廣告與預算測試', '思考順序與預算 → 實作建立廣告 → 預算與測試觀念'),
+                goal(['分清楚思考順序與後台設定位置', '完成一則包含目標、受眾、預算、素材的廣告', '理解預算、學習期與 A/B 測試']),
+                card('單元 1', '廣告邏輯：五步驟排序', '這是「思考順序」：從商業目標一步步推到設定。排完會標示每一步在後台的位置。', order()),
+                card('單元 2', '實作：建立你的廣告', '用你自己的產品或活動來設定。', builder()),
+                card('單元 3', '預算與測試觀念', '點一下，看重點。', tabsInfo([['日預算 vs 總預算', '<b>日預算</b>：每天大約花這個金額，適合持續投放。<br><b>總預算</b>：整段時間的上限，適合有明確檔期的活動。'], ['學習期', '新廣告上線或大改後，系統需要時間學習找對的人。一般來說，每個廣告組合每週約需 50 次優化事件才比較穩定。這段期間不要頻繁調整。'], ['測試預算', '預算有限時，少量版本、集中預算，比分很多組各花一點更容易有結果。']])),
+                card('小測驗', '', '', quiz([['預算有限時，比較合理的做法是？', ['集中在少數廣告組合', '切成很多組各花一點', '每天都換預算'], 0, '預算集中，每組才有足夠資料學習。'], ['A/B 測試一次應該改幾個變數？', ['一個', '三個', '全部都改'], 0, '一次只改一個，才看得出是哪個變數造成差異。'], ['廣告剛上線第 2 天，成效普通，建議？', ['立刻大改', '先觀察，度過學習期', '全部關掉'], 1, '學習期頻繁調整，會讓系統重新學習。']]))]
+            },
+            function () {
+                return [head('第六週：數據指標與優化', '指標分類 → 診斷與優化 → 回顧與下一步'),
+                goal(['分清楚數量、比率、成本三類指標', '依行銷目標挑對應的指標', '遇到問題時，一層層排除原因']),
+                card('單元 1', '指標分類', '先點一個指標，再點它所屬的分類。', classify()),
+                card('單元 1', '指標計算機', '不同目標看不同指標，也能自己算算看。', metrics()),
+                card('單元 2', '優化診斷', '依數據判斷下一步該怎麼做。診斷是一層層排除：先看追蹤，再看點擊之後，最後看廣告本身。', quiz([['曝光很高，點擊率只有 0.3%，最可能要改什麼？', ['素材與文案', '付款方式', '帳號名稱'], 0, '曝光多但沒人點，通常是素材不夠吸引人。'], ['點擊很多，但幾乎沒人購買，Pixel 事件也都正常觸發，下一步先檢查什麼？', ['落地頁體驗、價格與結帳流程', '增加曝光', '直接關閉廣告'], 0, '追蹤正常的話，問題多半在點擊之後：頁面速度、內容與廣告是否一致、價格與結帳流程。也可以回頭看目標是不是選了「流量」，它找的是愛點擊的人，不一定是會買的人。'], ['兩個素材，A 的 CPA 只有 B 的一半，且數據足夠，該怎麼做？', ['兩個都關', '把預算移向 A', '增加 B 預算'], 1, '成本更低的版本值得放大。'], ['CTR 和 CPC 有什麼不同？', ['CTR 是比率，CPC 是成本', '兩個都是成本', '兩個都是比率'], 0, 'CTR＝點擊÷曝光，是比率；CPC＝花費÷點擊，是每次點擊的成本。']])),
+                card('單元 3', '回顧與下一步', '整理六週學到的東西，並知道接下來怎麼練習。', review())]
+            }];
+
+        function tg(c, t, s) { $('.tag', c).textContent = t; if (s !== undefined) $('.sub', c).textContent = s; return c }
+        var WK = [
+            function () {
+                var a = OLD[0](), B = function (t) { return E('<p class="score" style="margin:28px 0 10px;font-size:18px">' + t + '</p>') }; return [head('第一週：認識 Meta 與第一次操作', 'Meta 功能介紹 → 模擬練習與實際操作'),
+                goal(['說得出 Meta 的資產架構：商家資產、粉專、廣告帳號、資料集的關係', '記住三層架構，並知道廣告是什麼', '能在模擬後台完成三層設定，再到實際後台做一次']),
+                B('① Meta 功能介紹'),
+                card('功能介紹', 'Meta 架構：商家資產與粉專的關係', '點每一個資產，看它是什麼、跟其他資產的關係。', bizmap()),
+                card('功能介紹', '廣告介紹', '先看一則廣告長什麼樣子，點上面的編號看每個部分，再點下方分頁看更多。', wrapN(adanatomy(), tabsInfo([['廣告由什麼組成', '圖片或影片，加上主要文字、標題與行動呼籲按鈕，並以某個粉專（或 IG 帳號）的名義出現。'], ['誰會看到', '系統用「拍賣」決定：出價之外，還看對方可能採取行動的機率與廣告品質。素材與受眾對了，成本會比較低。'], ['怎麼收費', '常見是依曝光次數計費，實際以後台顯示為準；成果再換算成 CPC、CPA 等指標來觀察。']]))),
+                tg(a[3], '功能介紹'),
+                card('功能介紹', '版位：廣告出現的位置', '點選版位，看廣告在那裡長什麼樣子；再看自動與手動版位怎麼選。', wrapN(placementPreview(), placements())),
+                card('功能介紹', '資料集', '點一下，看資料集是什麼、什麼時候需要。', tabsInfo([['資料集是什麼', '「收集行為資料的地方」，把網站、App、實體店或訊息裡發生的事件記錄下來。它不是廣告本身，而是用來衡量廣告有沒有用。'], ['事件', '常見事件：瀏覽內容、加入購物車、開始結帳、購買、送出表單。你選的廣告目標，會對應到想優化的事件。'], ['能做什麼', '衡量轉換、建立自訂受眾（例如看過網站的人）、讓系統學習哪種人比較會行動。'], ['有網站怎麼做', '建議設定：在資料集安裝追蹤（可用網站平台內建的整合），再到事件管理工具確認有收到瀏覽、加入購物車、購買等事件，之後才能投「銷售」或建立網站訪客受眾。'], ['怎麼安裝', '<b>先到事件管理工具建立資料集</b>：連結資料來源 → 網站 → 為資料集取名。<br><br><b>再選一種安裝方式（由簡單到複雜）：</b><ol style="margin:6px 0;padding-left:20px"><li><b>網站平台內建整合</b>（最簡單）：Shopify、WordPress、Wix 等多半有設定欄位或外掛，把資料集 ID 貼進去就好。</li><li><b>合作夥伴整合</b>：在 Meta 的設定畫面選你的網站平台，依指示授權連結。</li><li><b>手動貼程式碼</b>：複製 Meta 給的程式碼，貼到網站每一頁的 head 區，通常由網站管理者或工程師處理。</li><li><b>Google Tag Manager</b>：網站已經在用的話，可以在裡面新增，不用改網站程式。</li></ol><small>Meta 也提供 Conversions API（從伺服器端傳送資料），比較進階，一般從前面幾種開始即可。選單名稱可能調整，以實際後台為準。</small>'], ['怎麼確認裝好了', '<ol style="margin:6px 0;padding-left:20px"><li>在事件管理工具的資料集頁面，看有沒有出現收到的事件與時間。</li><li>用「測試事件」功能：輸入你的網站網址，在網站上操作一下（瀏覽、加入購物車），看事件有沒有即時出現。</li><li>也可以裝瀏覽器的 Meta Pixel Helper 擴充功能，開啟網站時會顯示有沒有偵測到。</li></ol><b>常見狀況：</b>沒收到事件，通常是 ID 貼錯、貼錯位置，或網站有快取，需要重新整理或請網站管理者確認。'], ['沒有網站時', '沒有網站就不需要先設定資料集。可以用互動、訊息或潛在顧客表單當成果，之後有網站再補。'], ['在哪個位置', '資料集屬於「帳號層」，連結到廣告帳號，不在三層架構裡，但會影響第二層的受眾與整體成效衡量。']])),
+                B('② 實際操作'),
+                card('模擬練習 1', '練習 1：簡單三層設定', '依情境，依序完成三層設定，按「檢查」看結果。', sim(0)),
+                card('最後練習', '最後練習：完整情境', '整合前面學的，通過後就可以到實際後台做了。', sim(2)),
+                card('實際後台', '接著到實際後台', '照剛剛的流程，在真正的廣告管理員做一次。', cl([['打開廣告管理員，確認選到正確的廣告帳號', ''], ['點「建立」，選行銷目標', '對應模擬練習的第 ① 層'], ['設定廣告組合：受眾、預算、版位', '對應第 ② 層'], ['設定廣告：選粉專、上傳素材、寫文案、選按鈕', '對應第 ③ 層'], ['（有網站）確認資料集有收到事件', '到事件管理工具查看；沒收到的話廣告仍可投放，但無法衡量轉換與建立網站訪客受眾'], ['預覽並檢查錯字', '第一次建議預算設小，例如每天約 NT$100 到 150，也可以先不發布'], ['發布前最後檢查：目標、受眾、預算、素材、付款方式', '']])),
+                fold([tg(a[2], '自學・課前預習'), card('自學・課前預習', '廣告帳號架設', '建議課前先完成，課堂上就不用花時間。依序完成這六件事，點一下標示完成。', accounts()), tg(a[4], '自學・模擬導覽', '這是練習用的假畫面，先隨便點點看每個功能。'), card('自學・練習 2', '練習 2：不同的目標', '換一個情境，目標和受眾要跟著調整。', sim(1)), tg(a[6], '自學・課後測驗')])]
+            },
+            function () {
+                var f = OLD[1](), a = OLD[2](), b = OLD[3](), c = OLD[4](); return [head('第二週：漏斗、受眾與素材規劃', '漏斗 → 受眾 → 價值與素材 → 思考順序'),
+                goal(['說出漏斗三個階段，與對應的目標、受眾、素材、指標', '分辨各種受眾，並依漏斗階段選擇', '把產品價值說清楚，依階段規劃素材角度並寫出文案', '分清思考順序與後台設定位置']),
+                tg(f[2], '單元 1'), tg(a[2], '單元 2'), tg(b[3], '單元 3'), tg(b[2], '單元 3'), tg(c[2], '單元 4'), fold([tg(c[3], '自學・課後作業'), tg(f[4], '自學・課後練習'), tg(a[4], '自學・課後練習'), tg(b[5], '自學・課後練習'), tg(c[4], '自學・課後延伸')])]
+            },
+            function () {
+                var a = OLD[5](), b = OLD[3](); return [head('第三週：測試、指標與優化', '素材測試 → 指標 → 診斷 → 回顧'),
+                goal(['會設計一份一次只改一個變數的素材測試表', '分清楚數量、比率、成本三類指標，並會自己計算', '遇到問題時一層層排除原因，並知道接下來怎麼練習']),
+                tg(b[4], '單元 1'), tg(a[2], '單元 2'), tg(a[3], '單元 2'), tg(a[4], '單元 3'), tg(a[5], '單元 4', '整理三週學到的東西，並知道接下來怎麼練習。')]
+            }];
+        /* 目前開放到第幾週：1、2 或 3。每週改這個數字即可 */
+        var RELEASED = 1;
+        var nav = $('#nav'), app = $('#app');
+        function go(i) { $$('button', nav).forEach(function (b, j) { b.classList.toggle('on', i === j) }); app.innerHTML = ''; (i < RELEASED ? WK[i]() : [head('第' + (i + 1) + '週', '尚未開放'), E('<div class="card"><h3>🔒 本週內容尚未開放</h3><p class="sub">等老師開放後再回來看看！</p></div>')]).forEach(function (x) { app.appendChild(x) }); try { history.replaceState(null, '', '#week' + (i + 1)) } catch (e) { } scrollTo(0, 0) }
+        ['第1週', '第2週', '第3週'].forEach(function (t, i) { var b = E('<button>' + (i < RELEASED ? '' : '🔒 ') + t + '</button>'); b.onclick = function () { go(i) }; nav.appendChild(b) });
+        var m = (location.hash.match(/week([1-3])/) || [0, 1])[1]; go(m - 1);
+    </script>
+</body>
+
+</html>
